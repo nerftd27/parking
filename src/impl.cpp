@@ -1,10 +1,9 @@
 #include "impl.h"
 
-#include <iostream>
-
 namespace BrakeParking {
 
 void Portal::VehicleGoForward(unsigned int vehicleNumber) {
+    // фиксить deadlock наверно будем потом, когда дойдем до реализации с двумя площадками и порталом между ними
     if (m_areaB) {
         std::lock_guard<std::mutex> lg(m_areaBMutex);
         m_areaB->DeleteVehicle(vehicleNumber);
@@ -29,7 +28,7 @@ void Portal::VehicleGoBack(unsigned int vehicleNumber) {
 
 
 bool Area::EmplaceVehicle(unsigned int vehicleNumber) {
-    // пока опускаем ошибочный случай, когда номер уже зарегестрирована
+    // пока опускаем ошибочный случай, когда номер уже зарегестрирован
     m_storage.insert(vehicleNumber);
     std::cout << "[BrakeParking] Entered vehicle " << vehicleNumber << std::endl;
     return true;
@@ -42,4 +41,7 @@ bool Area::DeleteVehicle(unsigned int vehicleNumber) {
     return true;
 }
 
+void Area::CheckFill() {
+    std::cout << "[BrakeParking] Parking slots: " << m_capacity << " Occupied: " << m_storage.size() << std::endl; 
+}
 } // namespace BrakeParking

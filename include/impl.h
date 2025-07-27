@@ -5,6 +5,7 @@
 #include <mutex>
 #include <vector>
 #include <unordered_set>
+#include <iostream>
 
 namespace BrakeParking {
 
@@ -20,8 +21,8 @@ public:
     }
 
     unsigned int GetId() const override { return m_id; }
-    void SetSideA(IArea* area) override { m_areaA = area; m_areaA->connectPortal(this); }
-    void SetSideB(IArea* area) override { m_areaB = area; m_areaB->connectPortal(this); }
+    void SetSideA(IArea* area) override { m_areaA = area; }
+    void SetSideB(IArea* area) override { m_areaB = area; }
     void VehicleGoForward(unsigned int vehicleNumber) override;
     void VehicleGoBack(unsigned int vehicleNumber) override ;
 
@@ -42,17 +43,12 @@ public:
         m_storage.reserve(m_capacity);
     }
 
-    void connectPortal(IPortal* portal) override {
-        m_portals.push_back(portal);
-    }
-
     bool EmplaceVehicle(unsigned int vehicleNumber) override;
     bool DeleteVehicle(unsigned int vehicleNumber) override;
-    void CheckFill() override {};
+    void CheckFill() override;
 
 private:
     const size_t m_capacity;
-    std::vector<IPortal*> m_portals;
     std::unordered_set<unsigned int> m_storage; // вместо сета может сделать мапу с пользовательской инфой типа время заезда, имя водителя и тд.
 };
 
