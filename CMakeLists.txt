@@ -14,7 +14,7 @@ target_sources(
     ${PROJECT_NAME}
     PUBLIC
         include/interfaces.h
-        include/impl1.h
+        include/impl.h
     PRIVATE
-        src/impl1.cpp
+        src/impl.cpp
 )
