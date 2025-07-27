@@ -2,7 +2,10 @@
 
 namespace BrakeParking {
 
-void Portal::VehicleGoForward(unsigned int vehicleNumber) {
+//------------------------------------------------------------------------------
+// Class Portal
+//------------------------------------------------------------------------------
+void Portal::VehicleMoveIn(unsigned int vehicleNumber) {
     // фиксить deadlock наверно будем потом, когда дойдем до реализации с двумя площадками и порталом между ними
     if (m_areaB) {
         std::lock_guard<std::mutex> lg(m_areaBMutex);
@@ -12,10 +15,9 @@ void Portal::VehicleGoForward(unsigned int vehicleNumber) {
         std::lock_guard<std::mutex> lg(m_areaAMutex);
         m_areaA->EmplaceVehicle(vehicleNumber);
     }
-    
 }
 
-void Portal::VehicleGoBack(unsigned int vehicleNumber) {
+void Portal::VehicleMoveOut(unsigned int vehicleNumber) {
     if (m_areaA) {
         std::lock_guard<std::mutex> lg(m_areaAMutex);
         m_areaA->DeleteVehicle(vehicleNumber);
@@ -26,7 +28,9 @@ void Portal::VehicleGoBack(unsigned int vehicleNumber) {
     }
 }
 
-
+//------------------------------------------------------------------------------
+// Class Area
+//------------------------------------------------------------------------------
 bool Area::EmplaceVehicle(unsigned int vehicleNumber) {
     // пока опускаем ошибочный случай, когда номер уже зарегестрирован
     m_storage.insert(vehicleNumber);
@@ -41,7 +45,19 @@ bool Area::DeleteVehicle(unsigned int vehicleNumber) {
     return true;
 }
 
-void Area::CheckFill() {
-    std::cout << "[BrakeParking] Parking slots: " << m_capacity << " Occupied: " << m_storage.size() << std::endl; 
+unsigned int Area::CheckOccupied() {
+    std::cout << "[BrakeParking] Parking slots: " << m_capacity << " Occupied: " << m_storage.size() << std::endl;
+    return m_storage.size();
 }
+
+//------------------------------------------------------------------------------
+// Class Parking
+//------------------------------------------------------------------------------
+void Parking::Construct() {
+    unsigned int portalId = 111;
+    IPortal* p = new Portal(portalId);
+    m_portals.insert(portalId, *p);
+}
+
+
 } // namespace BrakeParking

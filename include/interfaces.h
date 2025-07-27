@@ -4,9 +4,10 @@ namespace BrakeParking {
 
 class IArea {
 public:
+    virtual unsigned int GetId() const = 0;
     virtual bool EmplaceVehicle(unsigned int vehicleNumber) = 0;
     virtual bool DeleteVehicle(unsigned int vehicleNumber) = 0;
-    virtual void CheckFill() = 0; // просто выводит сколько занято ячеек, сколько свободно
+    virtual unsigned int CheckOccupied() = 0;
 };
 
 class IPortal {
@@ -14,8 +15,15 @@ public:
     virtual unsigned int GetId() const = 0;
     virtual void SetSideA(IArea*) = 0;
     virtual void SetSideB(IArea*) = 0;
-    virtual void VehicleGoForward(unsigned int vehicleNumber) = 0; // A -> B
-    virtual void VehicleGoBack(unsigned int vehicleNumber) = 0; // B -> A
+    virtual void VehicleMoveIn(unsigned int vehicleNumber) = 0; // A -> B
+    virtual void VehicleMoveOut(unsigned int vehicleNumber) = 0; // B -> A
+};
+
+class IParking {
+    virtual void Construct() = 0; // потом тут будем опрделять какой конфиг паркинга хотим сделать, количество портов, площадок и тд (стратегия?)
+    
+    virtual void VehicleMoveIn(unsigned int vehicleNumber, unsigned int portalId = 0) = 0;
+    virtual void VehicleMoveOut(unsigned int vehicleNumber, unsigned int portalId = 0) = 0;
 };
 
 } // namespace BrakeParking

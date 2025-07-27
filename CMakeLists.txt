@@ -18,3 +18,5 @@ target_sources(
     PRIVATE
         src/impl.cpp
 )
+
+add_subdirectory(tests)

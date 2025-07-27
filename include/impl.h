@@ -5,6 +5,7 @@
 #include <mutex>
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 #include <iostream>
 
 namespace BrakeParking {
@@ -23,8 +24,8 @@ public:
     unsigned int GetId() const override { return m_id; }
     void SetSideA(IArea* area) override { m_areaA = area; }
     void SetSideB(IArea* area) override { m_areaB = area; }
-    void VehicleGoForward(unsigned int vehicleNumber) override;
-    void VehicleGoBack(unsigned int vehicleNumber) override ;
+    void VehicleMoveIn(unsigned int vehicleNumber) override;
+    void VehicleMoveOut(unsigned int vehicleNumber) override;
 
 private:
     unsigned int m_id;
@@ -37,20 +38,35 @@ private:
 class Area : public IArea {
 public:
     Area() = delete;
-    Area(size_t capacity)
-        : m_capacity(capacity)
+    Area(unsigned int id, size_t capacity)
+        : m_id(id)
+        , m_capacity(capacity)
     {
         m_storage.reserve(m_capacity);
     }
 
+    unsigned int GetId() const override { return m_id; }
     bool EmplaceVehicle(unsigned int vehicleNumber) override;
     bool DeleteVehicle(unsigned int vehicleNumber) override;
-    void CheckFill() override;
+    unsigned int CheckOccupied() override;
 
 private:
+    unsigned int m_id;
     const size_t m_capacity;
     std::unordered_set<unsigned int> m_storage; // вместо сета может сделать мапу с пользовательской инфой типа время заезда, имя водителя и тд.
 };
 
+class Parking : public IParking {
+public:
+    void Construct() override;
+    
+    // Пока проксируем вызовы портала, но в сложном конфиге надо будет еще указывать сам портал
+    void VehicleMoveIn(unsigned int vehicleNumber, unsigned int portalId = 0) override;
+    void VehicleMoveOut(unsigned int vehicleNumber, unsigned int portalId = 0) override;
+
+private:
+    std::unordered_map<unsigned int, Portal> m_portals;
+    std::unordered_map<unsigned int, Area> m_areas;
+};
 
 } // namespace BrakeParking
