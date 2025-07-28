@@ -1,22 +1,23 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(BrakeParking VERSION 0.1)
+set(BRAKE_PARKING_LIB ${PROJECT_NAME})
 
 add_library(${PROJECT_NAME})
 
 target_include_directories(
     ${PROJECT_NAME}
     PUBLIC
-        include
+        ${CMAKE_SOURCE_DIR}/include
 )
 
 target_sources(
     ${PROJECT_NAME}
     PUBLIC
-        include/interfaces.h
-        include/impl.h
+        ${CMAKE_SOURCE_DIR}/include/interfaces.h
+        ${CMAKE_SOURCE_DIR}/include/impl.h
     PRIVATE
-        src/impl.cpp
+        ${CMAKE_SOURCE_DIR}/src/impl.cpp
 )
 
 add_subdirectory(tests)

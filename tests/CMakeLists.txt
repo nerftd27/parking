@@ -4,4 +4,9 @@ add_subdirectory(googletest)
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} ${CMAKE_SOURCE_DIR})
 
 add_executable(${PROJECT_NAME} test1.cpp)
-target_link_libraries(${PROJECT_NAME} gtest gtest_main)
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC 
+        gtest
+        gtest_main
+        BrakeParking
+)

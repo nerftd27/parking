@@ -21,7 +21,8 @@ public:
 
 class IParking {
     virtual void Construct() = 0; // потом тут будем опрделять какой конфиг паркинга хотим сделать, количество портов, площадок и тд (стратегия?)
-    
+    virtual unsigned int CheckOccupied() = 0;
+
     virtual void VehicleMoveIn(unsigned int vehicleNumber, unsigned int portalId = 0) = 0;
     virtual void VehicleMoveOut(unsigned int vehicleNumber, unsigned int portalId = 0) = 0;
 };

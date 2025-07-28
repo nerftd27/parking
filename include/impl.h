@@ -12,7 +12,7 @@ namespace BrakeParking {
 
 class Portal : public IPortal {
 public:
-    Portal() = delete;
+    Portal() = default;
 
     Portal(unsigned int id)
         : m_areaA {nullptr}
@@ -31,13 +31,13 @@ private:
     unsigned int m_id;
     IArea* m_areaA;
     IArea* m_areaB;
-    std::mutex m_areaAMutex;
-    std::mutex m_areaBMutex;
+    //std::mutex m_areaAMutex;
+    //std::mutex m_areaBMutex;
 };
 
 class Area : public IArea {
 public:
-    Area() = delete;
+    Area() = default;
     Area(unsigned int id, size_t capacity)
         : m_id(id)
         , m_capacity(capacity)
@@ -52,7 +52,7 @@ public:
 
 private:
     unsigned int m_id;
-    const size_t m_capacity;
+    size_t m_capacity;
     std::unordered_set<unsigned int> m_storage; // вместо сета может сделать мапу с пользовательской инфой типа время заезда, имя водителя и тд.
 };
 
@@ -60,9 +60,12 @@ class Parking : public IParking {
 public:
     void Construct() override;
     
-    // Пока проксируем вызовы портала, но в сложном конфиге надо будет еще указывать сам портал
+    // Пока проксируем вызовы единственного портала, но в сложном конфиге надо будет еще указывать сам портал
     void VehicleMoveIn(unsigned int vehicleNumber, unsigned int portalId = 0) override;
     void VehicleMoveOut(unsigned int vehicleNumber, unsigned int portalId = 0) override;
+
+    // здесь также пока проксируем вызов площадки
+    unsigned int CheckOccupied() override;
 
 private:
     std::unordered_map<unsigned int, Portal> m_portals;
