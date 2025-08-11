@@ -3,45 +3,51 @@
 namespace BrakeParking {
 
 //------------------------------------------------------------------------------
-// Class Portal
+// Class Barrier
 //------------------------------------------------------------------------------
-void Portal::VehicleMoveIn(unsigned int vehicleNumber) {
-    // фиксить deadlock наверно будем потом, когда дойдем до реализации с двумя площадками и порталом между ними
-    if (m_areaB) {
-        //std::lock_guard<std::mutex> lg(m_areaBMutex);
-        m_areaB->DeleteVehicle(vehicleNumber);
+void Barrier::VehicleMoveIn(VehicleNumberType vehicleNumber) {
+    if (m_areaOut) {
+        m_areaOut->DeleteVehicle(vehicleNumber);
     }
-    if (m_areaA) {
-        //std::lock_guard<std::mutex> lg(m_areaAMutex);
-        m_areaA->EmplaceVehicle(vehicleNumber);
+    if (m_areaIn) {
+        m_areaIn->EmplaceVehicle(vehicleNumber);
     }
 }
 
-void Portal::VehicleMoveOut(unsigned int vehicleNumber) {
-    if (m_areaA) {
-        //std::lock_guard<std::mutex> lg(m_areaAMutex);
-        m_areaA->DeleteVehicle(vehicleNumber);
+void Barrier::VehicleMoveOut(VehicleNumberType vehicleNumber) {
+    if (m_areaIn) {
+        m_areaIn->DeleteVehicle(vehicleNumber);
     }
-    if (m_areaB) {
-        //std::lock_guard<std::mutex> lg(m_areaBMutex);
-        m_areaB->EmplaceVehicle(vehicleNumber);
+    if (m_areaOut) {
+        m_areaOut->EmplaceVehicle(vehicleNumber);
     }
 }
 
 //------------------------------------------------------------------------------
 // Class Area
 //------------------------------------------------------------------------------
-bool Area::EmplaceVehicle(unsigned int vehicleNumber) {
+bool Area::EmplaceVehicle(VehicleNumberType vehicleNumber) {
     // пока опускаем ошибочный случай, когда номер уже зарегестрирован
-    m_storage.insert(vehicleNumber);
-    std::cout << "[BrakeParking] Entered vehicle " << vehicleNumber << std::endl;
+    m_occupied++;
+    auto now = std::chrono::system_clock::now();
+    m_storage.emplace(vehicleNumber, ParkingData{m_occupied, now, now});
+    
+    std::time_t t_c = std::chrono::system_clock::to_time_t(now);
+    std::cout << "[BrakeParking] Vehicle #" << vehicleNumber << " occupied place #" << m_occupied << " at " << std::ctime(&t_c) << std::endl;
     return true;
 }
 
-bool Area::DeleteVehicle(unsigned int vehicleNumber) {
-    // пока опускаем ошибочный случай, когда номер еще не зарегестрирован
+bool Area::DeleteVehicle(VehicleNumberType vehicleNumber) {
+    // пока опускаем ошибочный случай, когда номер еще не зарегистрирован
+    m_occupied--;
+    auto now = std::chrono::system_clock::now();
+    m_storage[vehicleNumber].EndOccupie = now;
+    m_accounting.emplace(vehicleNumber, ParkingData(m_storage[vehicleNumber]));
+    
     m_storage.erase(vehicleNumber);
-    std::cout << "[BrakeParking] Exited vehicle " << vehicleNumber << std::endl;
+
+    std::time_t t_c = std::chrono::system_clock::to_time_t(now);
+    std::cout << "[BrakeParking] Vehicle #" << vehicleNumber << " exited at " << std::ctime(&t_c) << std::endl;
     return true;
 }
 
@@ -53,23 +59,26 @@ unsigned int Area::CheckOccupied() {
 //------------------------------------------------------------------------------
 // Class Parking
 //------------------------------------------------------------------------------
-void Parking::Construct() {
-    unsigned int portalId = 10;
-    m_portals.emplace(portalId, Portal(portalId));
-    
-    unsigned int areaId = 2;
+void Parking::Construct(std::vector<BarrierIdType> barriers) {
+    AreaIdType areaId = 111;
     unsigned int capacity = 100;
     m_areas.emplace(areaId, Area(areaId, capacity));
 
-    m_portals[portalId].SetSideA(&m_areas[areaId]);
+    for (const auto& barrierId : barriers)
+    {
+        m_barriers.emplace(barrierId, Barrier(barrierId, &m_areas[areaId]));
+    }
 }
 
-void Parking::VehicleMoveIn(unsigned int vehicleNumber, unsigned int /*portalId =0*/) {
-    m_portals.begin()->second.VehicleMoveIn(vehicleNumber);
-}
-
-void Parking::VehicleMoveOut(unsigned int vehicleNumber, unsigned int /*portalId =0*/) {
-    m_portals.begin()->second.VehicleMoveOut(vehicleNumber);
+void Parking::VehicleMove(VehicleNumberType vehicleNumber, BarrierIdType id, IParking::MoveDirection md) {
+    if (IParking::MoveDirection::In == md) {
+        m_barriers[id].VehicleMoveIn(vehicleNumber);
+    }
+    else
+    {
+        m_barriers[id].VehicleMoveOut(vehicleNumber);
+    }
+    
 }
 
 unsigned int Parking::CheckOccupied() {
