@@ -13,7 +13,7 @@ public:
     virtual unsigned int GetId() const = 0;
     virtual bool EmplaceVehicle(VehicleNumberType vehicleNumber) = 0;
     virtual bool DeleteVehicle(VehicleNumberType vehicleNumber) = 0;
-    virtual unsigned int CheckOccupied() = 0;
+    virtual unsigned int CheckOccupied() const = 0;
 };
 
 class IBarrier {
@@ -29,8 +29,7 @@ class IParking {
 public:
     enum class MoveDirection { In, Out };
 
-    virtual void Construct(std::vector<BarrierIdType> barriers) = 0; // передаем список айдишников барьеров, которые мы хотим создать в этом паркинге
-    virtual unsigned int CheckOccupied() = 0;
+    virtual unsigned int CheckOccupied() const = 0;
 
     virtual void VehicleMove(VehicleNumberType vehicleNumber, BarrierIdType barrierId, MoveDirection ) = 0;
 };

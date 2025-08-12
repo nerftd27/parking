@@ -1,13 +1,12 @@
 #include <gtest/gtest.h>
-#include "include/impl.h"
+#include "include/parking.h"
 
 using namespace BrakeParking;
 
 TEST(BrakeParkingTest, BaseImplTest) {
-  Parking pk;
   unsigned int barrier0 = 10;  // Enterance
   unsigned int barrier1 = 20;  // Exit
-  pk.Construct(std::vector<unsigned int> {barrier0, barrier1});
+  Parking pk(std::vector<BarrierIdType> {barrier0, barrier1});
   
   const size_t vehicleNum = 10;
 

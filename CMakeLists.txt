@@ -15,9 +15,15 @@ target_sources(
     ${PROJECT_NAME}
     PUBLIC
         ${CMAKE_SOURCE_DIR}/include/interfaces.h
-        ${CMAKE_SOURCE_DIR}/include/impl.h
+        ${CMAKE_SOURCE_DIR}/include/thirdparty.h
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/src/impl.cpp
+        ${CMAKE_SOURCE_DIR}/include/barrier.h
+        ${CMAKE_SOURCE_DIR}/include/area.h
+        ${CMAKE_SOURCE_DIR}/include/parking.h
+        ${CMAKE_SOURCE_DIR}/src/barrier.cpp
+        ${CMAKE_SOURCE_DIR}/src/area.cpp
+        ${CMAKE_SOURCE_DIR}/src/parking.cpp
+        
 )
 
 add_subdirectory(tests)
