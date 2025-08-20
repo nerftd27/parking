@@ -7,12 +7,12 @@ namespace BrakeParking3rd {
 class BarrierHardware {
 public:
     inline bool OpenBarrier() {
-        std::cout << "[BrakeParking ThirdParty] Barrier opened\n";
+        std::cout << "[ThirdParty] Barrier opened\n";
         return true;
     }
 
     inline bool CloseBarrier() {
-        std::cout << "[BrakeParking ThirdParty] Barrier closed\n";
+        std::cout << "[ThirdParty] Barrier closed\n";
         return true;
     }
 };
@@ -22,7 +22,7 @@ public:
     inline bool PayParking(BrakeParking::VehicleNumberType number, unsigned int time) {
         // Execute payment
         // ...
-        std::cout << "[BrakeParking ThirdParty] Vehicle #" << number << " payed units: " << time << std::endl;
+        std::cout << "[ThirdParty] Vehicle #" << number << " payed units: " << time << std::endl;
         return true;
     }
 };

@@ -17,12 +17,17 @@ target_sources(
         ${CMAKE_SOURCE_DIR}/include/interfaces.h
         ${CMAKE_SOURCE_DIR}/include/thirdparty.h
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/include/barrier.h
         ${CMAKE_SOURCE_DIR}/include/area.h
+        ${CMAKE_SOURCE_DIR}/include/accounting.h
+        ${CMAKE_SOURCE_DIR}/include/barrier.h
         ${CMAKE_SOURCE_DIR}/include/parking.h
-        ${CMAKE_SOURCE_DIR}/src/barrier.cpp
+
         ${CMAKE_SOURCE_DIR}/src/area.cpp
+        ${CMAKE_SOURCE_DIR}/src/accounting.cpp
+        ${CMAKE_SOURCE_DIR}/src/barrier.cpp
         ${CMAKE_SOURCE_DIR}/src/parking.cpp
+
+        ${CMAKE_SOURCE_DIR}/include/freepays.h
         
 )
 

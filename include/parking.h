@@ -2,6 +2,7 @@
 
 #include "interfaces.h"
 #include "area.h"
+#include "accounting.h"
 #include "barrier.h"
 
 #include <unordered_map>
@@ -12,7 +13,6 @@ class Parking : public IParking {
 public:
     Parking() = delete;
     Parking (std::vector<BarrierIdType> barriers);
-    virtual ~Parking() {};
 
     void VehicleMove(VehicleNumberType vehicleNumber, BarrierIdType barrierId, IParking::MoveDirection md) override;
 
@@ -21,6 +21,8 @@ public:
 private:
     std::unordered_map<BarrierIdType, Barrier> m_barriers;
     std::unordered_map<AreaIdType, Area> m_areas;
+
+    Accounting m_accounting;
 };
 
 } // namespace BrakeParking

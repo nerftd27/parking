@@ -1,42 +1,46 @@
 #include "barrier.h"
+
 #include <iostream>
 
 namespace BrakeParking {
 
-void Barrier::VehicleMoveIn(VehicleNumberType vehicleNumber) {
-    if (m_hardware.OpenBarrier())
-    {
-        if (m_areaOut) {
-            m_areaOut->DeleteVehicle(vehicleNumber);
-        }
-        if (m_areaIn) {
-            m_areaIn->EmplaceVehicle(vehicleNumber);
-        }
-        m_hardware.CloseBarrier(); // неисправность при закрытии пока опустим
-    }
-    else
-    {
-        std::cout << "[BrakeParking] Barrier #" << m_id << "malfunction\n";
-        std::exit(111);
-    }
-}
+void Barrier::VehicleMove(VehicleNumberType vehicleNumber, IParking::MoveDirection md) {
+    IArea* areaA;
+    IArea* areaB;
 
-void Barrier::VehicleMoveOut(VehicleNumberType vehicleNumber) {
-    if (m_hardware.OpenBarrier())
-    {
-        if (m_areaIn) {
-            m_areaIn->DeleteVehicle(vehicleNumber);
-        }
-        if (m_areaOut) {
-            m_areaOut->EmplaceVehicle(vehicleNumber);
-        }
-        m_hardware.CloseBarrier();  // неисправность при закрытии пока опустим
+    if (md == IParking::MoveDirection::In) {
+        areaA = m_areaIn;
+        areaB = m_areaOut;
     }
     else
     {
-        std::cout << "[BrakeParking] Barrier #" << m_id << "malfunction\n";
-        std::exit(111);
+        areaA = m_areaOut;
+        areaB = m_areaIn;
     }
+
+    // С той стороны, откуда тачка заезжает - удаляем ее
+    if (areaB && m_accounting->MoveOut(m_id, vehicleNumber)) {
+        areaB->DeleteVehicle(vehicleNumber);
+        m_hardware.OpenBarrier();
+        std::cout << "[BrakeParking] Vehicle #" << vehicleNumber << " crossed barrier #" << m_id << " to OUT\n";
+    }
+
+    // В ту сторону, куда заезжает - добавляем
+    if (areaA) {
+        auto placeNumber = areaA->EmplaceVehicle(vehicleNumber);
+        if (placeNumber && m_accounting->MoveIn(m_id,vehicleNumber, placeNumber)) {
+            std::cout << "[BrakeParking] Vehicle #" << vehicleNumber << " crossed barrier #" << m_id << " to IN\n";
+            m_hardware.OpenBarrier();
+        }
+        else
+        {
+            std::cout << "[BrakeParking] Sorry, no free place for vehicle #" << vehicleNumber << std::endl;
+            return;
+        }
+    }   
+
+    m_hardware.CloseBarrier();
+    std::cout << std::endl;
 }
 
 } // namespace BrakeParking
