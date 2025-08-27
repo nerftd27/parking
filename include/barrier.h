@@ -1,22 +1,28 @@
 // Основная реализация барьера
 #pragma once
 
-#include "accounting.h"
+#include "accountingUmmap.h"
 #include "interfaces.h"
-#include "thirdparty.h"
+#include "thirdpartyAdapters.h"
+
+#include <memory>
 
 namespace BrakeParking {
 
 class Barrier : public IBarrier {
 
 public:
-    Barrier() = default;
+    Barrier()
+        : m_hardware(new BarrierHardwareAdapter()) 
+    {
+    }
 
-    Barrier(BarrierIdType id, Accounting* acc, IArea* areaIn = nullptr, IArea* areaOut = nullptr)
+    Barrier(BarrierIdType id, INotifier* notifier, IArea* areaIn = nullptr, IArea* areaOut = nullptr)
         : m_id(id)
-        , m_accounting(acc)
+        , m_notifier(notifier)
         , m_areaIn {areaIn}
         , m_areaOut {areaOut}
+        , m_hardware(new BarrierHardwareAdapter())
     {
     }
 
@@ -24,15 +30,16 @@ public:
     void SetSideIn(IArea* area) override { m_areaIn = area; }
     void SetSideOut(IArea* area) override { m_areaOut = area; }
     void VehicleMove(VehicleNumberType vehicleNumber, IParking::MoveDirection md) override;
+    void ManualControl(bool open = true) override;
 
 private:
     unsigned int m_id;
     IArea* m_areaIn;
     IArea* m_areaOut;
 
-    BrakeParking3rd::BarrierHardware m_hardware;
+    std::shared_ptr<IBarrierHardware> m_hardware;   // shared_ptr for move-semantics
 
-    Accounting* m_accounting;
+    INotifier* m_notifier;
     
 };
     

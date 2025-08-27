@@ -19,18 +19,20 @@ void Barrier::VehicleMove(VehicleNumberType vehicleNumber, IParking::MoveDirecti
     }
 
     // С той стороны, откуда тачка заезжает - удаляем ее
-    if (areaB && m_accounting->MoveOut(m_id, vehicleNumber)) {
+    if (areaB) {
+        m_notifier->Notify(m_id,IParking::MoveDirection::Out, vehicleNumber, 0);
         areaB->DeleteVehicle(vehicleNumber);
-        m_hardware.OpenBarrier();
+        m_hardware->OpenBarrier();
         std::cout << "[BrakeParking] Vehicle #" << vehicleNumber << " crossed barrier #" << m_id << " to OUT\n";
     }
 
     // В ту сторону, куда заезжает - добавляем
     if (areaA) {
         auto placeNumber = areaA->EmplaceVehicle(vehicleNumber);
-        if (placeNumber && m_accounting->MoveIn(m_id,vehicleNumber, placeNumber)) {
+        if (placeNumber) {
+            m_notifier->Notify(m_id,IParking::MoveDirection::In, vehicleNumber, placeNumber);
             std::cout << "[BrakeParking] Vehicle #" << vehicleNumber << " crossed barrier #" << m_id << " to IN\n";
-            m_hardware.OpenBarrier();
+            m_hardware->OpenBarrier();
         }
         else
         {
@@ -39,8 +41,19 @@ void Barrier::VehicleMove(VehicleNumberType vehicleNumber, IParking::MoveDirecti
         }
     }   
 
-    m_hardware.CloseBarrier();
+    m_hardware->CloseBarrier();
     std::cout << std::endl;
+}
+
+
+void Barrier::ManualControl(bool open /*=true*/) {
+    if (open) {
+        m_hardware->OpenBarrier();
+    }
+    else
+    {
+        m_hardware->CloseBarrier();
+    }
 }
 
 } // namespace BrakeParking
