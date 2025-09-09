@@ -17,6 +17,10 @@ public:
         return m_hardware.CloseBarrier();
     }
 
+    bool IsOpen() const override {
+        return m_hardware.IsOpen();
+    }
+
 private:
     BrakeParking3rd::BarrierHardware m_hardware;
 };

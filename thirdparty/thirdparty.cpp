@@ -5,13 +5,19 @@
 namespace BrakeParking3rd {
 
 bool BarrierHardware::OpenBarrier() {
+    m_isOpen = true;
     std::cout << "[ThirdParty] Barrier opened\n";
     return true;
 }
 
 bool BarrierHardware::CloseBarrier() {
+    m_isOpen = false;
     std::cout << "[ThirdParty] Barrier closed\n";
     return true;
+}
+
+bool BarrierHardware::IsOpen() const {
+    return m_isOpen;
 }
 
 bool PaymentSystem::PayParking(unsigned int number, unsigned int time) {

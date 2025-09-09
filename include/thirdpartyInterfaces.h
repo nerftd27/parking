@@ -10,6 +10,7 @@ public:
 public:
     virtual bool OpenBarrier() = 0;
     virtual bool CloseBarrier() = 0;
+    virtual bool IsOpen() const = 0;
 };
 
 class IPaymentSystem {

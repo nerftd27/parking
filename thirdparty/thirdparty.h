@@ -6,8 +6,17 @@ namespace BrakeParking3rd {
 
 class BarrierHardware {
 public:
+    BarrierHardware()
+        : m_isOpen(false) {
+    }
+
+public:
     bool OpenBarrier();
     bool CloseBarrier();
+    bool IsOpen() const;
+
+private:
+    bool m_isOpen;
 };
 
 class PaymentSystem {

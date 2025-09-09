@@ -21,14 +21,16 @@ target_sources(
         ${CMAKE_SOURCE_DIR}/thirdparty/thirdparty.h
     PRIVATE
         ${CMAKE_SOURCE_DIR}/include/area.h
-        ${CMAKE_SOURCE_DIR}/include/accountingUmmap.h
+        ${CMAKE_SOURCE_DIR}/include/accounting.h
+        ${CMAKE_SOURCE_DIR}/include/accountingDB.h
         ${CMAKE_SOURCE_DIR}/include/accountingListener.h
         ${CMAKE_SOURCE_DIR}/include/barrier.h
         ${CMAKE_SOURCE_DIR}/include/barrierNotifier.h
         ${CMAKE_SOURCE_DIR}/include/parking.h
 
         ${CMAKE_SOURCE_DIR}/src/area.cpp
-        ${CMAKE_SOURCE_DIR}/src/accountingUmmap.cpp
+        ${CMAKE_SOURCE_DIR}/src/accounting.cpp
+        ${CMAKE_SOURCE_DIR}/src/accountingDB.cpp
         ${CMAKE_SOURCE_DIR}/src/barrier.cpp
         ${CMAKE_SOURCE_DIR}/src/parking.cpp
 

@@ -11,11 +11,11 @@ class BarrierNotifier : public INotifier {
 public:
     virtual ~BarrierNotifier() = default;
 public:
-    void AddListener(IListener* listener) override {
+    void AddListener(std::shared_ptr<IListener> listener) override {
         m_list.push_back(listener);
     }
 
-    void RemoveListener(IListener* listener) override {
+    void RemoveListener(std::shared_ptr<IListener> listener) override {
         auto it = std::find(m_list.begin(), m_list.end(), listener);
         if (it != m_list.end())
             m_list.erase(it);
@@ -27,7 +27,7 @@ public:
         }
     }
 private:
-    std::list<IListener*> m_list;
+    std::list<std::shared_ptr<IListener>> m_list;
 };
 
 } // namespace BrakeParking
