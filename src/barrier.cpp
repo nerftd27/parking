@@ -4,7 +4,7 @@
 
 namespace BrakeParking {
 
-void Barrier::VehicleMove(VehicleNumberType vehicleNumber, IParking::MoveDirection md, std::size_t placeNumber) {
+void Barrier::VehicleMove(VehicleNumberType vehicleNumber, MoveDirection md, std::size_t placeNumber) {
     m_notifier->Notify(m_id, md, vehicleNumber, placeNumber);
     m_hardware->OpenBarrier();
     std::cout << "[BrakeParking] Vehicle #" << vehicleNumber << " crossed barrier #" << m_id << " \n";

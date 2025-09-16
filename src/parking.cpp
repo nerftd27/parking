@@ -30,7 +30,7 @@ void Parking::VehicleMove(IParking::CustomerData& data) {
     IArea* areaA = nullptr; 
     IArea* areaB = nullptr; 
 
-    if (data.m_direction == IParking::MoveDirection::In) {
+    if (data.m_direction == MoveDirection::In) {
         areaA = data.m_areaIn ? &m_areas[data.m_areaIn] : nullptr;
         areaB = data.m_areaOut ? &m_areas[data.m_areaOut] : nullptr;
     }
@@ -42,14 +42,14 @@ void Parking::VehicleMove(IParking::CustomerData& data) {
 
     // С той стороны, откуда тачка заезжает - удаляем ее
     if (areaB) {
-        m_barriers[data.m_barrierId].VehicleMove(data.m_vehicleNumber, IParking::MoveDirection::Out, 0);
+        m_barriers[data.m_barrierId].VehicleMove(data.m_vehicleNumber, MoveDirection::Out, 0);
         areaB->DeleteVehicle(data.m_vehicleNumber);
     }
     // В ту сторону, куда заезжает - добавляем
     if (areaA) {
         auto placeNumber = areaA->EmplaceVehicle(data.m_vehicleNumber, data.m_place);
         if (placeNumber) {
-            m_barriers[data.m_barrierId].VehicleMove(data.m_vehicleNumber, IParking::MoveDirection::In, placeNumber);
+            m_barriers[data.m_barrierId].VehicleMove(data.m_vehicleNumber, MoveDirection::In, placeNumber);
         }
         else
         {
@@ -67,8 +67,8 @@ void Parking::ManualControlBarrier(BarrierIdType id, bool open) {
     m_barriers.at(id).ManualControl(open);
 }
 
-bool Parking::GetBarrierStatus(BarrierIdType id) const {
-    return m_barriers.at(id).IsOpen();
+Barrier::BarrierStatus Parking::GetBarrierStatus(BarrierIdType id) const {
+    return m_barriers.at(id).Status();
 }
 
 bool Parking::CheckVacantPlace(AreaIdType areaId, size_t place) const {

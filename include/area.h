@@ -15,11 +15,11 @@ public:
     };
 public:
     Area() = default;
-    Area(unsigned int id, std::size_t capacity)
+    Area(AreaIdType id, std::size_t capacity)
         : m_id(id)
         , m_occupied(0)
         , m_capacity(capacity)
-        , m_storage(capacity, {0,IArea::StatusPlace::VACANT})
+        , m_storage(capacity, {0, IArea::StatusPlace::VACANT})
     {
     }
 

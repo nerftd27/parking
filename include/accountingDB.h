@@ -21,8 +21,8 @@ public:
 public:
     bool StartRecord(BarrierIdType id, VehicleNumberType vehicleNumber, std::size_t placeNumber, std::chrono::time_point<std::chrono::system_clock> StartTime) override;
     bool FinalizeRecord(BarrierIdType id, VehicleNumberType vehicleNumber, std::chrono::time_point<std::chrono::system_clock> EndTime) override;
-    size_t CalcPrice(VehicleNumberType vehicleNumber, std::chrono::time_point<std::chrono::system_clock> EndTime) override;
-    void Print() override;
+    std::chrono::time_point<std::chrono::system_clock> GetStartTimeRecord(VehicleNumberType vehicleNumber) override;
+    void Flush(std::ostream* st /*&std::cout*/) override;
 
 private:
     TypeDB::iterator FindUnpayedVehicle(VehicleNumberType vehicleNumber);

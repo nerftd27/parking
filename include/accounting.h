@@ -18,7 +18,7 @@ public:
     }
 
     ~Accounting() {
-        m_db->Print();
+        m_db->Flush();
     }
 
 public:

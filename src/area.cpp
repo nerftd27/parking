@@ -15,7 +15,7 @@ std::size_t Area::EmplaceVehicle(VehicleNumberType vehicleNumber, size_t place /
     }
 
     // кейс с зарезервированным местом
-    for (std::size_t i=0;i<m_capacity;i++) {
+    for (std::size_t i=0; i<m_capacity; i++) {
         if ((m_storage.at(i).m_status == IArea::StatusPlace::RESERVED) && m_storage.at(i).m_vehicleNumber == vehicleNumber) {
             m_storage.at(i).m_status = IArea::StatusPlace::OCCUPIED;
             return i+1;
@@ -38,7 +38,7 @@ std::size_t Area::EmplaceVehicle(VehicleNumberType vehicleNumber, size_t place /
 
 std::size_t Area::DeleteVehicle(VehicleNumberType vehicleNumber) {
     m_occupied--;
-    for (std::size_t i=0;i<m_capacity;i++) {
+    for (std::size_t i=0; i<m_capacity; i++) {
             if (m_storage.at(i).m_vehicleNumber == vehicleNumber) {
                 m_storage.at(i).m_vehicleNumber = 0;
                 m_storage.at(i).m_status = IArea::StatusPlace::VACANT;

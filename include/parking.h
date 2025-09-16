@@ -19,7 +19,7 @@ public:
 public:
     void VehicleMove(IParking::CustomerData& data) override;
     unsigned int GetOccupiedCount(AreaIdType areaId) const override;
-    bool GetBarrierStatus(BarrierIdType barrierId) const override;
+    IBarrier::BarrierStatus GetBarrierStatus(BarrierIdType barrierId) const override;
     void ManualControlBarrier(BarrierIdType barrierId, bool open) override;
     bool CheckVacantPlace(AreaIdType areaId, size_t place) const override;
     bool ReservePlace(AreaIdType areaId, VehicleNumberType vehicleNumber, size_t place) override;

@@ -24,13 +24,13 @@ AccountingDB::TypeDB::iterator AccountingDB::FindUnpayedVehicle(VehicleNumberTyp
     return current;
 }
 
-size_t AccountingDB::CalcPrice(VehicleNumberType vehicleNumber, std::chrono::time_point<std::chrono::system_clock> EndTime) {
+std::chrono::time_point<std::chrono::system_clock> AccountingDB::GetStartTimeRecord(VehicleNumberType vehicleNumber) {
      auto current = FindUnpayedVehicle(vehicleNumber);
      if (current != m_storage.end()) {
-        auto payment = std::chrono::duration_cast<std::chrono::milliseconds>(EndTime - current->second.StartTime);
-        return payment.count();
+        //auto payment = std::chrono::duration_cast<std::chrono::milliseconds>(EndTime - current->second.StartTime);
+        return current->second.StartTime;
      }
-     return 0;
+     return std::chrono::system_clock::now();
 }
 
 bool AccountingDB::FinalizeRecord(BarrierIdType id, VehicleNumberType vehicleNumber, std::chrono::time_point<std::chrono::system_clock> EndTime) {
@@ -47,14 +47,14 @@ bool AccountingDB::FinalizeRecord(BarrierIdType id, VehicleNumberType vehicleNum
         return false;
 }
 
-void AccountingDB::Print() {
-    std::cout << "[BrakeParking] ----- Start print accountingDB -----" << std::endl;
+void AccountingDB::Flush(std::ostream* st = &std::cout) {
+    *st << "[BrakeParking] ----- Start print accountingDB -----" << std::endl;
     for (const auto& it : m_storage) {
         std::time_t tStart = std::chrono::system_clock::to_time_t(it.second.StartTime);
         std::time_t tEnd = std::chrono::system_clock::to_time_t(it.second.EndTime);
-        std::cout << "[BrakeParking] ----- Vehicle #" << it.first << " place #" << it.second.PlaceNumber << " Its payed: " << it.second.isPayed << " start time: " << std::ctime(&tStart) << " end time: " << std::ctime(&tEnd)<< std::endl;
+        *st << "[BrakeParking] ----- Vehicle #" << it.first << " place #" << it.second.PlaceNumber << " Its payed: " << it.second.isPayed << " start time: " << std::ctime(&tStart) << " end time: " << std::ctime(&tEnd)<< std::endl;
     }
-    std::cout << "[BrakeParking] ----- End print accountingDB -----" << std::endl;
+    *st << "[BrakeParking] ----- End print accountingDB -----" << std::endl;
 }
 
 } // namespace BrakeParking

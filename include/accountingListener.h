@@ -12,8 +12,8 @@ public:
     }
 
 public:
-    void OnNotify(BarrierIdType id,  IParking::MoveDirection md, VehicleNumberType vehicleNumber,std::size_t placeNumber) override {
-        if (IParking::MoveDirection::In == md) {
+    void OnNotify(BarrierIdType id,  MoveDirection md, VehicleNumberType vehicleNumber,std::size_t placeNumber) override {
+        if (MoveDirection::In == md) {
             m_accounting.MoveIn(id, vehicleNumber, placeNumber);
         }
         else {

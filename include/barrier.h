@@ -14,6 +14,11 @@ public:
         : m_hardware(std::make_unique<BarrierHardwareAdapter>()) {
     }
 
+    Barrier(BarrierIdType id)
+        : m_id(id)
+        , m_hardware(std::make_unique<BarrierHardwareAdapter>()) {
+    }
+
     Barrier(BarrierIdType id, std::shared_ptr<INotifier> notifier)
         : m_id(id)
         , m_hardware(std::make_unique<BarrierHardwareAdapter> ()) {
@@ -50,8 +55,8 @@ public:
     }
 
     BarrierIdType GetId() const override { return m_id; }
-    void VehicleMove(VehicleNumberType vehicleNumber, IParking::MoveDirection md, std::size_t placeNumber) override;
-    bool IsOpen() const override { return m_hardware->IsOpen(); }
+    void VehicleMove(VehicleNumberType vehicleNumber, MoveDirection md, std::size_t placeNumber) override;
+    BarrierStatus Status() const override {  return (m_hardware->IsOpen() ? BarrierStatus::Open : BarrierStatus::Closed); }
     void ManualControl(bool open) override;
 
 

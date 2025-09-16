@@ -3,12 +3,15 @@
 #include <cstdio>
 #include <chrono>
 #include <memory>
+#include <iostream>
 
 namespace BrakeParking {
 
 typedef unsigned int VehicleNumberType;
 typedef unsigned int BarrierIdType;
 typedef unsigned int AreaIdType;
+
+enum class MoveDirection { In, Out };
 
 class IArea {
 public:
@@ -24,11 +27,22 @@ public:
     virtual bool ReservePlace(VehicleNumberType vehicleNumber, size_t place) = 0;
 };
 
+class IBarrier {
+public:
+    virtual ~IBarrier() {}
+
+    enum class BarrierStatus { Open, Closed, Broken };
+public:
+    virtual unsigned int GetId() const = 0;
+    virtual void VehicleMove(VehicleNumberType vehicleNumber, MoveDirection md, std::size_t placeNumber) = 0;
+    virtual BarrierStatus Status() const = 0;
+    virtual void ManualControl(bool open) = 0;
+};
+
 class IParking {
 public:
     virtual ~IParking() {}
 public:
-    enum class MoveDirection { In, Out };
 
     struct CustomerData {
         VehicleNumberType m_vehicleNumber;
@@ -45,22 +59,12 @@ public:
     // Дилема: напрямую в интерфейсе паркинга делать методы, которые будут проксировать методы барьера, зоны тд.
     // Или же делать геттеры на константую ссылку барьера/зоны, и через них дергать нужные методы
     virtual void ManualControlBarrier(BarrierIdType barrierId, bool open) = 0;
-    virtual bool GetBarrierStatus(BarrierIdType barrierId) const = 0;
+    virtual IBarrier::BarrierStatus GetBarrierStatus(BarrierIdType barrierId) const = 0;
     
     virtual unsigned int GetOccupiedCount(AreaIdType areaId) const = 0;
     virtual bool CheckVacantPlace(AreaIdType areaId, size_t place) const = 0;
     virtual bool ReservePlace(AreaIdType areaId, VehicleNumberType vehicleNumber, size_t place) = 0;
 
-};
-
-class IBarrier {
-public:
-    virtual ~IBarrier() {}
-public:
-    virtual unsigned int GetId() const = 0;
-    virtual void VehicleMove(VehicleNumberType vehicleNumber, IParking::MoveDirection md, std::size_t placeNumber) = 0;
-    virtual bool IsOpen() const = 0;
-    virtual void ManualControl(bool open) = 0;
 };
 
 class IAccounting {
@@ -77,8 +81,8 @@ public:
 public:
     virtual bool StartRecord(BarrierIdType id, VehicleNumberType vehicleNumber, std::size_t placeNumber, std::chrono::time_point<std::chrono::system_clock> StartTime) =0;
     virtual bool FinalizeRecord(BarrierIdType id, VehicleNumberType vehicleNumber, std::chrono::time_point<std::chrono::system_clock> EndTime) = 0;
-    virtual size_t CalcPrice(VehicleNumberType vehicleNumber, std::chrono::time_point<std::chrono::system_clock> EndTime) = 0;
-    virtual void Print() = 0;
+    virtual std::chrono::time_point<std::chrono::system_clock> GetStartTimeRecord(VehicleNumberType vehicleNumber) = 0;
+    virtual void Flush(std::ostream* st = &std::cout) = 0;
 };
 
 
@@ -86,16 +90,16 @@ class IListener {
 public:
     virtual ~IListener() = default;
 public:
-    virtual void OnNotify(BarrierIdType id,  IParking::MoveDirection md, VehicleNumberType vehicleNumber,std::size_t placeNumber) = 0;
+    virtual void OnNotify(BarrierIdType id,  MoveDirection md, VehicleNumberType vehicleNumber,std::size_t placeNumber) = 0;
 };
 
 class INotifier {
 public:
     virtual ~INotifier() = default;
 public:
-    virtual void AddListener(std::shared_ptr<IListener>) = 0;
-    virtual void RemoveListener(std::shared_ptr<IListener>) = 0;
-    virtual void Notify(BarrierIdType id,  IParking::MoveDirection md, VehicleNumberType vehicleNumber,std::size_t placeNumber) = 0;
+    virtual void AddListener(std::weak_ptr<IListener>) = 0;
+    virtual void RemoveListener(std::weak_ptr<IListener>) = 0;
+    virtual void Notify(BarrierIdType id,  MoveDirection md, VehicleNumberType vehicleNumber,std::size_t placeNumber) = 0;
 };
 
 } // namespace BrakeParking
